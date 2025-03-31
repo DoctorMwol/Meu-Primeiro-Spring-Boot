@@ -7,12 +7,14 @@ import com.example.meu_primeiro_spring_boot.services.ProdutoServices;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 
+import com.example.meu_primeiro_spring_boot.exceptions.RecursoNaoEncontradoException;
 import com.example.meu_primeiro_spring_boot.model.Produto;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,10 +37,14 @@ public class ProdutoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Produto> buscarProduto(@PathVariable Long id) {
-        return produtoServices.buscarPorId(id)
-            .map(ResponseEntity::ok)
-            .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<?> buscarProduto(@PathVariable Long id) {
+        try {
+            Produto produto = produtoServices.buscarPorId(id);
+            return ResponseEntity.ok(produto);
+        }
+        catch (RecursoNaoEncontradoException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
     @PostMapping()
@@ -51,9 +57,5 @@ public class ProdutoController {
         produtoServices.deletarProduto(id);
         return ResponseEntity.noContent().build();
     }
-    
-    
-    
-
     
 }
