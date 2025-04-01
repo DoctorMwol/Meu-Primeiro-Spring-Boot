@@ -1,7 +1,6 @@
 package com.example.meu_primeiro_spring_boot.services;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
